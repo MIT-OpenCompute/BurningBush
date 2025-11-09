@@ -57,11 +57,11 @@ U0 TopologicalSortUtil(Tensor *T, Tensor **visited, I64 visited_count, Tensor **
 Tensor* TensorCreate(I64 *shape, I64 ndim) {
     I64 i;
 
-    Tensor *T = MALloc(sizeof(Tensor));
+    Tensor *T = MAlloc(sizeof(Tensor));
     if (!T) return NULL; 
 
     T->ndim = ndim; 
-    T->shape = (I64 *)Malloc(ndim * sizeof(I64)); 
+    T->shape = (I64 *)MAlloc(ndim * sizeof(I64)); 
     if (!T->shape) {
         Free(T); 
         return NULL; 
@@ -73,7 +73,7 @@ Tensor* TensorCreate(I64 *shape, I64 ndim) {
         T->size *= shape[i];
     }
 
-    T->data = MALloc(T->size * sizeof(F32)); 
+    T->data = MAlloc(T->size * sizeof(F32)); 
     if (!T->data) {
         Free(T->shape); 
         Free(T); 
@@ -152,15 +152,15 @@ U0 TensorBackward(Tensor *T) {
     if (!T || !T->requires_grad) return; 
 
     if (!T->grad) {
-        T->grad = MALloc(T->size * sizeof(F32));
+        T->grad = MAlloc(T->size * sizeof(F32));
         for (i = 0; i < T->size; i++) {
             T->grad[i] = 0.0f;
         }
     }
 
     I64 max_size = 1024; 
-    Tensor **visited = MALloc(max_size * sizeof(Tensor *)); 
-    Tensor **stack = MALloc(max_size * sizeof(Tensor *));
+    Tensor **visited = MAlloc(max_size * sizeof(Tensor *)); 
+    Tensor **stack = MAlloc(max_size * sizeof(Tensor *));
     I64 visited_count = 0;
     I64 stack_count = 0;
 
@@ -233,5 +233,16 @@ Tensor* TensorCopy(Tensor *T) {
     Tensor *C = TensorCreate(T->shape, T->ndim); 
     if (!C) return NULL; 
 
-    M
+    MemCpy(C->data, T->data, T->size * sizeof(F32)); 
+
+    C->grad = NULL;
+    C->requires_grad = 0; 
+    C->owns_data = TRUE; 
+    C->op_type = OP_NONE;
+    C->parents = NULL;
+    C->num_parents = 0;
+    C->backward_fn = NULL;
+    C->extra_data = NULL;
+
+    return C; 
 }
