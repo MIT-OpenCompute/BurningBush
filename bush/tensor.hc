@@ -31,7 +31,7 @@ class Tensor {
 };
 
 // Autograd helper functions
-U0 TopologicalSortUtil(Tensor *T, Tensor **visited, I64 visited_count, Tensor **stack, I64 *visited_count, Tensor **stack, I64 *stack_count, I64 max_size) {
+static U0 TopologicalSortUtil(Tensor *T, Tensor **visited, I64 visited_count, Tensor **stack, I64 *visited_count, Tensor **stack, I64 *stack_count, I64 max_size) {
     I64 i; 
 
     for (i = 0; i < *visited_count; i++) {

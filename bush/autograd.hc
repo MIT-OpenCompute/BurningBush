@@ -1,6 +1,6 @@
-#include <bush/tensor.hc>
+#include "bush/tensor.hc"
 
-U0 *Calloc(U64 count, U64 size) {
+static U0 *Calloc(U64 count, U64 size) {
     U64 total = count * size; 
     U0 *ptr = MAlloc(total); 
     if (ptr) MemSet(ptr, 0, total); 
@@ -58,6 +58,31 @@ U0 BackwardSub(Tensor *C) {
         for (i = 0; i < B->size; i++) {
             B->grad[i] -= C->grad[i];
         }
+    }
+}
+
+U0 BackwardScale(Tensor *C) {
+    I64 i; 
+
+    if (!C || !C->parents || C->num_parents < 2) return; 
+
+    Tensor *A = C->parents[0]; 
+    Tensor *B = C->parents[1]; 
+
+    if (A->requires_grad) {
+        if (!A->grad) A->grad = Calloc(A->size, sizeof(F32)); 
+        for (i = 0; i < A->size; i++) {
+            A->grad[i] += C->grad[i] * B->data[0]; 
+        }
+    }
+    
+    if (B->requires_grad) {
+        if (!B->grad) B->grad = Calloc(B->size, sizeof(F32)); 
+        F32 acc = 0.0f; 
+        for (i = 0; i < B->size; i++) {
+            acc += C->grad[i] * A->data[i]; 
+        }
+        B->grad[0] += acc; 
     }
 }
 
