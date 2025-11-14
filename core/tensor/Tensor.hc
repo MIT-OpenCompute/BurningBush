@@ -19,7 +19,7 @@ class Tensor {
     F64 *grad; 
 
     I64 *shape; 
-    I64 size; 
+    I64 size;
     I64 ndim; 
 
     U8 requires_grad;
@@ -97,32 +97,6 @@ class Tensor {
 
     }
 
-    /* ===== Tensor Metadata Helpers ===== */
-
-    Tensor *View(Tensor *self, I64 *new_shape, I64 ndim) {
-
-    }
-
-    Tensor *Transpose2D(Tensor *self) {
-
-    }
-
-    Tensor *Premute(Tensor *self, I64 *dims, I64 ndim) {
-
-    }
-
-    Tensor *SqueezeDim(Tensor *self, I64 dim) {
-
-    }
-
-    Tensor *UnsqueezeDim(Tensor *self, I64 dim) {
-
-    }
-
-    Tensor *SliceRaw(Tensor *self, I64 *start, I64 *end, I64 *step) {
-
-    }
-
     /* ===== Tensor In-Place Helpers ===== */
 
     U0 Fill(Tensor *self, F64 value) {
@@ -138,6 +112,14 @@ class Tensor {
     }
 
     U0 ZeroGrad(Tensor *self) {
+
+    }
+
+    U0 SetType(Tensor *self, TensorDType dtype) {
+
+    }
+
+    U0 SetDevice(Tensor *self, TensorDevice device) {
 
     }
 
